@@ -1,2 +1,5 @@
 # Sharepoint
-Custom built Sharepoint features
+Custom built Sharepoint objects
+Prequisites:
+-Bootstrap
+
