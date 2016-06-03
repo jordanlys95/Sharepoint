@@ -1,0 +1,60 @@
+<!-- Button trigger modal -->
+<!--button type="button" data-toggle="modal" data-target="#myModal">
+Browse Available Hardware
+</button>
+<div>
+<button type="button" onclick="onClear()">Clear All Orders</button>
+<button type="button" onclick="removeLastLine()">Clear Last Item</button>
+</div-->
+<style>
+label{
+  margin-bottom: 0px;
+}
+input[type="radio"], input[type="checkbox"]{
+  margin: 0px;
+  margin-right: 5px;
+}
+</style>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Available Equipment</h4>
+      </div>
+      <div class="modal-body">
+        <table class="ms-formtable" style="margin-top: 8px;" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td class="ms-formlabel">Quantity<span class="ms-accentText" title="This is a required field."> *</span></td>
+          <td><input id="qty" type="number" name="quantity" placeholder="0" min="1" max="999" maxlength="3" required></td>
+        </tr>
+        <tr>
+          <td class="ms-formlabel">Models<span class="ms-accentText" title="This is a required field."> *</span></td>
+          <td>
+            <select id="selection" onchange="changeddl(this)" required>
+            <!--auto populate options-->
+          </select>
+        </td>
+        </tr>
+        <tr>
+          <td>Price</td>
+          <td>
+            <div id="divprice"></div>
+          </td>
+        </tr>
+
+      </table>
+      <script src = "/SiteAssets/Javascripts/peripheral.js"></script>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal">Close</button>
+        <button type="button" onclick="onClear()"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Clear All Item(s)&nbsp;&nbsp;</button>
+        <button type="button" onclick="removeLastLine()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Remove Last Item</button>
+        <button type="button" onclick="onSubmit()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Add Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+   <script src="/SiteAssets/Javascripts/peripheral-edit.js"></script>​​

@@ -1,0 +1,149 @@
+<script>
+$(document).ready(function() {
+  getFeed();
+  $("#img-url").bind({
+    copy : function(){
+      $("#img-preview").attr("src", $('#img-url').val());
+    },
+    paste : function(){
+      $("#img-preview").attr("src", $('#img-url').val());
+    },
+    cut : function(){
+      $("#img-preview").attr("src", $('#img-url').val());
+    }
+  });
+  setInterval(function() {
+  getFeed();
+}, 5000);
+
+});
+
+function getFeed()
+{
+        $('.expr-content').empty();
+        var method = "GetListItems";
+        var list = "ExpressionsFeed";
+        var fieldsToRead =     "<ViewFields>" +
+                                "<FieldRef Name='content' />" +
+                                "<FieldRef Name='Author' />" +
+                                "<FieldRef Name='Created' />" +
+                            "</ViewFields>";
+        var query = "<Query><Where><Neq><FieldRef Name='content'/><Value Type=''></Value></Neq></Where></Query>";
+
+        $().SPServices({
+                operation: method,
+                async: false,  //if you set this to true, you may get faster performance, but your order may not be accurate.
+                listName: list,
+                CAMLViewFields: fieldsToRead,
+                  CAMLQuery: query,
+                    completefunc: function (xData, Status) {
+                        $(xData.responseXML).SPFilterNode("z:row").each(function() {
+
+                            //get the title field (Speaker's Name)
+                            var value = ($(this).attr("ows_content"));
+                            var name = ($(this).attr("ows_Author")); //eg. raw value with id
+                            var time = ($(this).attr("ows_Created"));
+                            var shortname = name.substring(name.indexOf("\\") + 1); // eg. stcadmin
+                            var longname = name.substring(name.indexOf("#") + 1); // eg, with domain //psatest\stcadmin
+                            //call a function to add the data from the row to a table on the screen
+                            $(".expr-content").prepend('<div class="panel panel-default"><div class="panel-body"><h3>'+shortname+'</h3></div><div class="panel-footer"><p>'+value+'</p><p class="small text-right">'+time+'</p></div></div>');
+
+                        });
+                    }
+        });
+
+}
+
+function AddListItem(content) {
+            $().SPServices({
+                operation: "UpdateListItems",
+                async: false,
+                batchCmd: "New",
+                listName: "ExpressionsFeed",
+                valuepairs: [["content", content]],
+                completefunc: function (xData, Status) {
+                  location.reload();
+                }
+            });
+        }
+
+function imagePreview(){
+  $('#img-url').on('input', function() {
+    $("#img-preview").attr("src", $('#img-url').val());
+  });
+}
+
+function appendList(){
+  if($('#expr-in').val()){
+    var title = $("#expr-in").val();
+    AddListItem(title);
+    }
+}
+
+</script>
+<div>
+    <h2>Expressions</h2>
+    </div>
+<form>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Express yourself!" id="expr-in">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="button" style="min-width: 0em;" onclick="appendList('text')"><span class="glyphicon glyphicon-edit"></span></button>
+                  <button type="button" class="btn btn-default disabled" style="min-width: 0em;" data-toggle="modal" data-target=".bs-link-modal-lg"><span class="glyphicon glyphicon-link"></span></button>
+                  <button type="button" class="btn btn-default disabled" style="min-width: 0em;" data-toggle="modal" data-target=".bs-img-modal-lg"><span class="glyphicon glyphicon-picture"></span></button>
+                </span>
+              </div>
+            </br>
+            <!-- img -->
+            <div class="modal fade bs-img-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content"  >
+                  <div class="container-fluid" style="padding: 5%;">
+                    <label for="basic-url">Share an Image</label>
+                    <div class="input-group">
+                      <span class="input-group-addon" id="basic-addon1">Image URL</span>
+                      <input id="img-url" type="text" class="form-control" placeholder="https://example.com/image.jpg" aria-describedby="basic-addon1" onchange="imagePreview()">
+                    </div>
+                  </br>
+                    <div class="input-group">
+                      <span class="input-group-addon" id="basic-addon1">Image Caption</span>
+                      <input id="img-caption" type="text" class="form-control" placeholder="e.g. Check this offer out!" aria-describedby="basic-addon1" onchange="imagePreview()">
+                    </div>
+                    <div style="padding: 1%;"><img id="img-preview img-responsive" width="100%" src=""></img></div>
+                    <button type="button" class="btn btn-primary" onclick="appendList('image')">Share</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Link -->
+
+            <div class="modal fade bs-link-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="container-fluid" style="padding: 5%;">
+                    <label for="basic-url">Share a URL</label>
+                    <div class="input-group">
+                      <span class="input-group-addon" id="basic-addon1">URL/Embed Link</span>
+                      <input id="link-url" type="text" class="form-control" placeholder="https://globalpsa.com" aria-describedby="basic-addon1" onchange="imagePreview()">
+                    </div>
+                  </br>
+                    <div class="input-group">
+                      <span class="input-group-addon" id="basic-addon1">Caption</span>
+                      <input id="link-caption" type="text" class="form-control" placeholder="e.g. Check this offer out!" aria-describedby="basic-addon1" onchange="imagePreview()">
+                    </div>
+                  </br>
+
+                    <button type="button" class="btn btn-primary" onclick="appendList('link')">Share</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+
+    <div class="expr-sidebar" style="">
+    <div class = "expr-content" style="max-height: 800px; overflow-y: scroll;">
+	     <!--AUTO POPULATE BY EXPRESSIONFEED LIST-->
+    </div>
+      </div>
+    </div>
